@@ -38,6 +38,18 @@ jobs:
             > trufflehog.json
         continue-on-error: true
 
+      - name: TruffleHog Report (HTML)
+        run: |
+          echo "<html><body><h1>TruffleHog Secrets Report</h1><table border='1'>" > trufflehog.html
+          echo "<tr><th>Type</th><th>File</th><th>Line</th><th>Detector</th></tr>" >> trufflehog.html
+          jq -r '
+            select(.SourceMetadata != null) |
+            "<tr><td>\(.DetectorName)</td><td>\(.SourceMetadata.Data.File)</td><td>\(.SourceMetadata.Data.Line)</td><td>\(.DetectorType)</td></tr>"
+          ' trufflehog.json >> trufflehog.html
+          echo "</table></body></html>" >> trufflehog.html
+        continue-on-error: true
+
+
       - name: Install Trivy
         run: |
           TRIVY_VERSION=0.56.1
@@ -73,6 +85,8 @@ jobs:
           name: appsec-reports
           path: |
             semgrep.json
+            trufflehog.json
+            trufflehog.html
             sbom.json
             trivy-sca.json
             trivy-sca.html
