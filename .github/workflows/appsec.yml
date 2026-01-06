@@ -23,6 +23,21 @@ jobs:
           semgrep scan --config=auto --json > semgrep.json
         continue-on-error: true
 
+      - name: Install TruffleHog
+        run: |
+          TRUFFLEHOG_VERSION=3.88.2
+          curl -sfL https://github.com/trufflesecurity/trufflehog/releases/download/v${TRUFFLEHOG_VERSION}/trufflehog_${TRUFFLEHOG_VERSION}_linux_amd64.tar.gz | tar -xz
+          sudo mv trufflehog /usr/local/bin/trufflehog
+          trufflehog --version
+
+      - name: TruffleHog Secrets Scan (JSON)
+        run: |
+          trufflehog filesystem . \
+            --json \
+            --no-update \
+            > trufflehog.json
+        continue-on-error: true
+
       - name: Install Trivy
         run: |
           TRIVY_VERSION=0.56.1
