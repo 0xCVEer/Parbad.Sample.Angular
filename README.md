@@ -26,3 +26,13 @@ $env:NODE_OPTIONS="--openssl-legacy-provider"
 
 npm start
 ```
+
+## dotnet
+```
+1. Install .NET SDK
+
+2. Change Parbad.Sample.Angular.csproj file:
+    <TargetFramework>net10.0</TargetFramework>
+3. dotnet restore
+4. dotnet run
+```
