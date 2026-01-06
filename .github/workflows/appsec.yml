@@ -23,14 +23,6 @@ jobs:
           semgrep scan --config=auto --json > semgrep.json
         continue-on-error: true
 
-      - name: Install Syft
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-
-      - name: Generate SBOM (CycloneDX)
-        run: |
-          syft . -o cyclonedx-json > sbom.json
-
       - name: Install Trivy
         run: |
           TRIVY_VERSION=0.56.1
@@ -38,12 +30,19 @@ jobs:
           sudo mv trivy /usr/local/bin/trivy
           trivy --version
 
+      - name: Generate SBOM (CycloneDX)
+        run: |
+          trivy fs . \
+            --format cyclonedx \
+            --output sbom.json
 
       - name: Trivy SCA Scan (JSON)
         run: |
-          trivy sbom sbom.json --format json --output trivy-sca.json
+          trivy sbom sbom.json \
+            --format json \
+            --output trivy-sca.json
         continue-on-error: true
-
+        
       - name: Trivy SCA Scan (HTML)
         run: |
           trivy sbom sbom.json \
@@ -51,6 +50,7 @@ jobs:
             --template "@contrib/html.tpl" \
             --output trivy-sca.html
         continue-on-error: true
+
 
       - name: Upload AppSec Artifacts
         uses: actions/upload-artifact@v4
