@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Projects\\Parbad.Samples-master\\Shared\\Parbad.Sample.Shared.csproj": {}
+    "e:\\Projects\\Parbad.Samples-master\\Web\\Parbad.Sample.Angular\\Shared\\Parbad.Sample.Shared.csproj": {}
   },
   "projects": {
-    "E:\\Projects\\Parbad.Samples-master\\Shared\\Parbad.Sample.Shared.csproj": {
+    "e:\\Projects\\Parbad.Samples-master\\Web\\Parbad.Sample.Angular\\Shared\\Parbad.Sample.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Projects\\Parbad.Samples-master\\Shared\\Parbad.Sample.Shared.csproj",
+        "projectUniqueName": "e:\\Projects\\Parbad.Samples-master\\Web\\Parbad.Sample.Angular\\Shared\\Parbad.Sample.Shared.csproj",
         "projectName": "Parbad.Sample.Shared",
-        "projectPath": "E:\\Projects\\Parbad.Samples-master\\Shared\\Parbad.Sample.Shared.csproj",
+        "projectPath": "e:\\Projects\\Parbad.Samples-master\\Web\\Parbad.Sample.Angular\\Shared\\Parbad.Sample.Shared.csproj",
         "packagesPath": "C:\\Users\\dearuser\\.nuget\\packages\\",
-        "outputPath": "E:\\Projects\\Parbad.Samples-master\\Shared\\obj\\",
+        "outputPath": "e:\\Projects\\Parbad.Samples-master\\Web\\Parbad.Sample.Angular\\Shared\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\dearuser\\AppData\\Roaming\\NuGet\\NuGet.Config"

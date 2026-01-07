@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Parbad.Sample.Angular")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7351b98f66daf0feb9a1fcc6b6366110f2ad31da")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fce66dacb6733c2fc09035bfa41112133a4cf4eb")]
 [assembly: System.Reflection.AssemblyProductAttribute("Parbad.Sample.Angular")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Parbad.Sample.Angular")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
