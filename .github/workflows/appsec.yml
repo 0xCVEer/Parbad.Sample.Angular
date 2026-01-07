@@ -97,12 +97,36 @@ jobs:
             --output trivy-sca.html
         continue-on-error: true
 
+      - name: .NET (Setup)
+        uses: actions/setup-dotnet@v5.0.1
+        with:
+            dotnet-version: '10.0.x'
+
+      - name: .NET (Restore Dependencies)
+        run: dotnet restore
+        
+      - name: .NET (Run)
+        run: dotnet run
+
+      - name: .NET (Health Check)
+        run: curl -I http://localhost:5000
+
+      - name: Run Nuclei DAST
+        run: |
+          docker run --rm \
+            projectdiscovery/nuclei:latest \
+            -u http://localhost:5000 \
+            -severity low,medium,high,critical \
+            -json \
+            -o nuclei.json || true
+
 
       - name: Upload AppSec Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: appsec-reports
           path: |
+            nuclei.json
             semgrep-report.html
             semgrep.json
             trufflehog.json
