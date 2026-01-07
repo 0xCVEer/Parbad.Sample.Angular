@@ -23,6 +23,25 @@ jobs:
           semgrep scan --config=auto --json > semgrep.json
         continue-on-error: true
 
+      - name: Semgrep2HTML (Setup Python)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+          
+      - name: Semgrep2HTML (Install Dependencies)
+        run: |
+          pip install jinja2
+
+      - name: Semgrep2HTML (Generate Report)
+        run: |
+          git clone https://github.com/lux10n/semgrep2html.git
+          python3 semgrep2html/parse-semgrep.py \
+            --input semgrep.json \
+            --output semgrep-report.html \
+            --project-name "${{ github.repository }}" \
+            --branch "${{ github.ref_name }}" \
+            --only INFO,WARNING,ERROR
+
       - name: Install TruffleHog
         run: |
           TRUFFLEHOG_VERSION=3.88.2
@@ -84,6 +103,7 @@ jobs:
         with:
           name: appsec-reports
           path: |
+            semgrep-report.html
             semgrep.json
             trufflehog.json
             trufflehog.html
