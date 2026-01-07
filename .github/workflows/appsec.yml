@@ -97,6 +97,18 @@ jobs:
             --output trivy-sca.html
         continue-on-error: true
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14'
+          
+      - name: Install Angular dependencies
+        working-directory: ClientApp
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: |
+          npm install --legacy-peer-deps
+
       - name: .NET (Setup)
         uses: actions/setup-dotnet@v5.0.1
         with:
