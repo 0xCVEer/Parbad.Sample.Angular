@@ -1,0 +1,136 @@
+name: AppSec Pipeline
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+
+jobs:
+  appsec:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install Semgrep
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install semgrep
+
+      - name: Semgrep SAST Scan (JSON)
+        run: |
+          semgrep scan --config=auto --json > semgrep.json
+        continue-on-error: true
+
+      - name: Semgrep2HTML (Setup Python)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+          
+      - name: Semgrep2HTML (Install Dependencies)
+        run: |
+          pip install jinja2
+
+      - name: Semgrep2HTML (Generate Report)
+        run: |
+          git clone https://github.com/lux10n/semgrep2html.git
+          python3 semgrep2html/parse-semgrep.py \
+            --input semgrep.json \
+            --output semgrep-report.html \
+            --project-name "${{ github.repository }}" \
+            --branch "${{ github.ref_name }}" \
+            --only INFO,WARNING,ERROR
+
+      - name: Install TruffleHog
+        run: |
+          TRUFFLEHOG_VERSION=3.88.2
+          curl -sfL https://github.com/trufflesecurity/trufflehog/releases/download/v${TRUFFLEHOG_VERSION}/trufflehog_${TRUFFLEHOG_VERSION}_linux_amd64.tar.gz | tar -xz
+          sudo mv trufflehog /usr/local/bin/trufflehog
+          trufflehog --version
+
+      - name: TruffleHog Secrets Scan (JSON)
+        run: |
+          trufflehog filesystem . \
+            --json \
+            --no-update \
+            > trufflehog.json
+        continue-on-error: true
+
+      - name: TruffleHog Report (HTML)
+        run: |
+          echo "<html><body><h1>TruffleHog Secrets Report</h1><table border='1'>" > trufflehog.html
+          echo "<tr><th>Type</th><th>File</th><th>Line</th><th>Detector</th></tr>" >> trufflehog.html
+          jq -r '
+            select(.SourceMetadata != null) |
+            "<tr><td>\(.DetectorName)</td><td>\(.SourceMetadata.Data.File)</td><td>\(.SourceMetadata.Data.Line)</td><td>\(.DetectorType)</td></tr>"
+          ' trufflehog.json >> trufflehog.html
+          echo "</table></body></html>" >> trufflehog.html
+        continue-on-error: true
+
+
+      - name: Install Trivy
+        run: |
+          TRIVY_VERSION=0.56.1
+          curl -sfL https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz | tar -xz
+          sudo mv trivy /usr/local/bin/trivy
+          trivy --version
+
+      - name: Generate SBOM (CycloneDX)
+        run: |
+          trivy fs . \
+            --format cyclonedx \
+            --output sbom.json
+
+      - name: Trivy SCA Scan (JSON)
+        run: |
+          trivy sbom sbom.json \
+            --format json \
+            --output trivy-sca.json
+        continue-on-error: true
+        
+      - name: Trivy SCA Scan (HTML)
+        run: |
+          trivy sbom sbom.json \
+            --format template \
+            --template "@contrib/html.tpl" \
+            --output trivy-sca.html
+        continue-on-error: true
+
+      - name: .NET (Setup)
+        uses: actions/setup-dotnet@v5.0.1
+        with:
+            dotnet-version: '10.0.x'
+
+      - name: .NET (Restore Dependencies)
+        run: dotnet restore
+        
+      - name: .NET (Run)
+        run: dotnet run
+
+      - name: .NET (Health Check)
+        run: curl -I http://localhost:5000
+
+      - name: Run Nuclei DAST
+        run: |
+          docker run --rm \
+            projectdiscovery/nuclei:latest \
+            -u http://localhost:5000 \
+            -severity low,medium,high,critical \
+            -json \
+            -o nuclei.json || true
+
+
+      - name: Upload AppSec Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: appsec-reports
+          path: |
+            nuclei.json
+            semgrep-report.html
+            semgrep.json
+            trufflehog.json
+            trufflehog.html
+            sbom.json
+            trivy-sca.json
+            trivy-sca.html
