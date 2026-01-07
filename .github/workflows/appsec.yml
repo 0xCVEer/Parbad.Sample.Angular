@@ -118,7 +118,7 @@ jobs:
         run: dotnet restore
         
       - name: .NET (Run)
-        run: dotnet run
+        run: dotnet run & sleep 30
 
       - name: .NET (Health Check)
         run: curl -I http://localhost:5000
