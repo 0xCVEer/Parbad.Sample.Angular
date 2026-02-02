@@ -1,4 +1,4 @@
-﻿namespace Parbad.Sample.Shared
+﻿namespace Shared
 {
     public enum Gateways
     {

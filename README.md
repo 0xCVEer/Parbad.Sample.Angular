@@ -33,6 +33,9 @@ npm start
 
 2. Change Parbad.Sample.Angular.csproj file:
     <TargetFramework>net10.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+2.5 Change Shared Folder import in source code!
+namespace Parbad.Sample.Shared To Shared
 3. dotnet restore
 4. dotnet run
 ```

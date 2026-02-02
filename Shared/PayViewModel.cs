@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Parbad.Sample.Shared
+namespace Shared
 {
     public class PayViewModel
     {

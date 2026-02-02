@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parbad.Sample.Angular.Repositories;
-using Parbad.Sample.Shared;
+using Shared;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,21 +43,21 @@ public class PaymentController : ControllerBase
                                                        });
 
         // Note: Save the result.TrackingNumber in your database.
-            
+
         _orderRepository.AddOrder(new Order
-                                  {
-                                      PaymentTrackingNumber = result.TrackingNumber,
-                                      Amount = result.Amount,
-                                      GatewayName = result.GatewayName,
-                                      GatewayAccountName = result.GatewayAccountName
-                                  });
+        {
+            PaymentTrackingNumber = result.TrackingNumber,
+            Amount = result.Amount,
+            GatewayName = result.GatewayName,
+            GatewayAccountName = result.GatewayAccountName
+        });
 
         return Ok(new
-                  {
-                      result.IsSucceed,
-                      result.Message,
-                      Transporter = CreateTransporterForClientApp(result.GatewayTransporter)
-                  });
+        {
+            result.IsSucceed,
+            result.Message,
+            Transporter = CreateTransporterForClientApp(result.GatewayTransporter)
+        });
     }
 
     [Route("verify")]
@@ -73,7 +73,7 @@ public class PaymentController : ControllerBase
             var verifyResult = await _onlinePayment.VerifyAsync(invoice);
 
             // Note: Save the verifyResult.TransactionCode in your database.
-                
+
             _orderRepository.UpdateOrder(order, verifyResult.IsSucceed, verifyResult.Message, verifyResult.TransactionCode);
         }
         else
@@ -90,10 +90,10 @@ public class PaymentController : ControllerBase
     public IActionResult GetGateways()
     {
         var gateways = Enum.GetValues<Gateways>().Select(@enum => new
-                                                                  {
-                                                                      Name = @enum.ToString(),
-                                                                      Value = (int)@enum
-                                                                  });
+        {
+            Name = @enum.ToString(),
+            Value = (int)@enum
+        });
 
         return Ok(gateways);
     }
@@ -104,16 +104,16 @@ public class PaymentController : ControllerBase
 
         // ClientApps can use Javascript to create a <form> using this data
         var form = gatewayTransporter.Descriptor.Form?.Select(item => new
-                                                                      {
-                                                                          item.Key,
-                                                                          item.Value
-                                                                      });
+        {
+            item.Key,
+            item.Value
+        });
 
         return new
-               {
-                   gatewayTransporter.Descriptor.Type,
-                   gatewayTransporter.Descriptor.Url,
-                   Form = form
-               };
+        {
+            gatewayTransporter.Descriptor.Type,
+            gatewayTransporter.Descriptor.Url,
+            Form = form
+        };
     }
 }
