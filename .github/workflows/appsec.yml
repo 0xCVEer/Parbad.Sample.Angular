@@ -127,7 +127,8 @@ jobs:
         run: |
           docker run --network=host --rm \
             projectdiscovery/nuclei:latest \
-            -u http://localhost:5000 \
+            -ip-version 4
+            -u http://127.0.0.1:5000 \
             -severity info,low,medium,high,critical \
             -o nuclei-result.txt || true
 
