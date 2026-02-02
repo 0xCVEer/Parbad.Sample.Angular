@@ -100,7 +100,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'latest'
+          node-version: 16.20.2
           
       - name: Install Angular dependencies
         working-directory: ClientApp
