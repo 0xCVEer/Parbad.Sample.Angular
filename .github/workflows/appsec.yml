@@ -128,9 +128,8 @@ jobs:
           docker run --rm \
             projectdiscovery/nuclei:latest \
             -u http://localhost:5000 \
-            -severity low,medium,high,critical \
-            -json \
-            -o nuclei.json || true
+            -severity info,low,medium,high,critical \
+            -o nuclei-result.txt || true
 
 
       - name: Upload AppSec Artifacts
