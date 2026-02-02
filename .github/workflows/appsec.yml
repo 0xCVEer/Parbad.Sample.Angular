@@ -123,14 +123,34 @@ jobs:
       - name: .NET (Health Check)
         run: curl -I http://localhost:5000
 
+      # - name: Run Nuclei DAST
+      #   run: |
+      #     docker run --network=host --rm \
+      #       projectdiscovery/nuclei:latest \
+      #       -u http://127.0.0.1:5000 \
+      #       -ip-version 4 \
+      #       -severity info,low,medium,high,critical \
+      #       -j -o nuclei-result.json || true
+
+      - name: Install Nuclei
+        run: |
+            curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest \
+            | grep browser_download_url \
+            | grep linux_amd64.zip \
+            | cut -d '"' -f 4 \
+            | wget -qi -
+            unzip nuclei_*_linux_amd64.zip
+            sudo mv nuclei /usr/local/bin/
+
       - name: Run Nuclei DAST
         run: |
-          docker run --network=host --rm \
-            projectdiscovery/nuclei:latest \
+          nuclei \
             -u http://127.0.0.1:5000 \
-            -ip-version 4 \
             -severity info,low,medium,high,critical \
-            -j -o nuclei-result.json || true
+            -update-templates \
+            -jsonl \
+            -o nuclei-result.json \
+            || true
 
 
       - name: Upload AppSec Artifacts
