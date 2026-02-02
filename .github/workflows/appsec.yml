@@ -127,10 +127,10 @@ jobs:
         run: |
           docker run --network=host --rm \
             projectdiscovery/nuclei:latest \
-            -ip-version 4
+            -ip-version 4 \
             -u http://127.0.0.1:5000 \
             -severity info,low,medium,high,critical \
-            -o nuclei-result.txt || true
+            -j -o nuclei-result.json || true
 
 
       - name: Upload AppSec Artifacts
@@ -138,7 +138,7 @@ jobs:
         with:
           name: appsec-reports
           path: |
-            nuclei.json
+            nuclei-result.json
             semgrep-report.html
             semgrep.json
             trufflehog.json
