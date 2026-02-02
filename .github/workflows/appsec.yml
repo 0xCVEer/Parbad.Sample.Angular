@@ -104,8 +104,8 @@ jobs:
           
       - name: Install Angular dependencies
         working-directory: ClientApp
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
+        # env: 
+          # (NodeJS version has been downgraded, no need to have this) NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm install --legacy-peer-deps
 
