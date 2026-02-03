@@ -149,6 +149,7 @@ jobs:
       - name: ZAP Scan
         uses: zaproxy/action-full-scan@v0.13.0
         continue-on-error: true
+        artifact_name: zap_scan.zip
         with:
           target: 'http://127.0.0.1:5000'
 
@@ -158,6 +159,7 @@ jobs:
           name: appsec-reports
           path: |
             nuclei-result.json
+            zap_scan.zip
             semgrep-report.html
             semgrep.json
             trufflehog.json
