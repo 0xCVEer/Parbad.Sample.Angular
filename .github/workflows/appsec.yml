@@ -118,7 +118,7 @@ jobs:
         run: dotnet restore
         
       - name: .NET (Run)
-        run: dotnet run & sleep 60
+        run: export ASPNETCORE_URLS=http://0.0.0.0:5000 & dotnet run & sleep 20
 
       - name: .NET (Health Check)
         run: curl -I http://localhost:5000
@@ -144,7 +144,7 @@ jobs:
 
       - name: Run Nuclei DAST
         run: |
-          nuclei -u localhost:5000 -severity info,low,medium,high,critical -jsonl -o nuclei-result.json 
+          nuclei -u http://127.0.0.1:5000 -severity info,low,medium,high,critical -jsonl -o nuclei-result.json 
 
       - name: Upload AppSec Artifacts
         uses: actions/upload-artifact@v4
