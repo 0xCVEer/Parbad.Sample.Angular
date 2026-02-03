@@ -149,8 +149,8 @@ jobs:
       - name: ZAP Scan
         uses: zaproxy/action-full-scan@v0.13.0
         continue-on-error: true
-        artifact_name: zap_scan.zip
         with:
+          artifact_name: zap_scan.zip
           target: 'http://127.0.0.1:5000'
 
       - name: Upload AppSec Artifacts
