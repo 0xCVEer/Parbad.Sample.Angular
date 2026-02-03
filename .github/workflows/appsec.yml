@@ -145,6 +145,11 @@ jobs:
       - name: Run Nuclei DAST
         run: |
           nuclei -u http://127.0.0.1:5000 -severity info,low,medium,high,critical -system-resolvers -no-mhe -jsonl -o nuclei-result.json 
+          
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.13.0
+        with:
+          target: 'http://localhost:5000'
 
       - name: Upload AppSec Artifacts
         uses: actions/upload-artifact@v4
