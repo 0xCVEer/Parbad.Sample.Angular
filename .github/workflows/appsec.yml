@@ -144,7 +144,7 @@ jobs:
 
       - name: Run Nuclei DAST
         run: |
-          nuclei -u http://127.0.0.1:5000 -severity info,low,medium,high,critical -jsonl -o nuclei-result.json 
+          nuclei -u http://127.0.0.1:5000 -severity info,low,medium,high,critical -debug -system-resolvers -no-mhe -jsonl -o nuclei-result.json 
 
       - name: Upload AppSec Artifacts
         uses: actions/upload-artifact@v4
