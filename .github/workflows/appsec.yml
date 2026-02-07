@@ -6,14 +6,13 @@ on:
   pull_request:
 
 jobs:
-
-        
-  SAST:
+  appsec:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout source code
         uses: actions/checkout@v4
-        
+
       - name: Install Semgrep
         run: |
           python3 -m pip install --upgrade pip
@@ -43,13 +42,6 @@ jobs:
             --branch "${{ github.ref_name }}" \
             --only INFO,WARNING,ERROR
 
-  Secret-Scanning:
-    needs: SAST
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
       - name: Install TruffleHog
         run: |
           TRUFFLEHOG_VERSION=3.88.2
@@ -76,13 +68,7 @@ jobs:
           echo "</table></body></html>" >> trufflehog.html
         continue-on-error: true
 
-  SCA:
-    needs: Secret-Scanning
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
+
       - name: Install Trivy
         run: |
           TRIVY_VERSION=0.56.1
@@ -110,14 +96,7 @@ jobs:
             --template "@contrib/html.tpl" \
             --output trivy-sca.html
         continue-on-error: true
-        
-  Application-Initialize:
-    needs: SCA
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -128,15 +107,8 @@ jobs:
         # env: 
           # (NodeJS version has been downgraded, no need to have this) NODE_OPTIONS: --openssl-legacy-provider
         run: |
-          npm install
+          npm install --legacy-peer-deps
 
-  # BackEnd-Initialize:
-  #   needs: FrontEnd-Initialize
-  #   runs-on: ubuntu-latest
-  #   steps:
-      # - name: Checkout
-      #   uses: actions/checkout@v4
-        
       - name: .NET (Setup)
         uses: actions/setup-dotnet@v5.0.1
         with:
@@ -146,23 +118,7 @@ jobs:
         run: dotnet restore
         
       - name: .NET (Run)
-        run: | 
-          export ASPNETCORE_URLS=http://0.0.0.0:5000
-          dotnet run & sleep 30
-
-      - name: Wait for Backend
-        run: |
-          for i in {1..30}; do
-            if curl -s http://127.0.0.1:5000 >/dev/null; then
-              echo "Backend is UP"
-              exit 0
-            fi
-            echo "Waiting for backend..."
-            sleep 5
-          done
-          echo "Backend did not start in time"
-          exit 1
-
+        run: export ASPNETCORE_URLS=http://0.0.0.0:5000 & dotnet run & sleep 20
 
       - name: .NET (Health Check)
         run: curl -I http://localhost:5000
@@ -176,13 +132,6 @@ jobs:
       #       -severity info,low,medium,high,critical \
       #       -j -o nuclei-result.json || true
 
-  DAST:
-    needs: Application-Initialize
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
       - name: Install Nuclei
         run: |
             curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest \
@@ -203,14 +152,7 @@ jobs:
         with:
           artifact_name: zap_scan.zip
           target: 'http://127.0.0.1:5000'
-          
-  Upload-Artifcatcs:
-    needs: DAST
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
+
       - name: Upload AppSec Artifacts
         uses: actions/upload-artifact@v4
         with:
