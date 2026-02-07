@@ -68,7 +68,26 @@ jobs:
           echo "</table></body></html>" >> trufflehog.html
         continue-on-error: true
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.2
+          
+      - name: Install Angular dependencies
+        working-directory: ClientApp
+        # env: 
+          # (NodeJS version has been downgraded, no need to have this) NODE_OPTIONS: --openssl-legacy-provider
+        run: |
+          npm install --legacy-peer-deps
 
+      - name: .NET (Setup)
+        uses: actions/setup-dotnet@v5.0.1
+        with:
+            dotnet-version: '10.0.x'
+
+      - name: .NET (Restore Dependencies)
+        run: dotnet restore
+        
       - name: Install Trivy
         run: |
           TRIVY_VERSION=0.56.1
@@ -97,25 +116,7 @@ jobs:
             --output trivy-sca.html
         continue-on-error: true
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 16.20.2
-          
-      - name: Install Angular dependencies
-        working-directory: ClientApp
-        # env: 
-          # (NodeJS version has been downgraded, no need to have this) NODE_OPTIONS: --openssl-legacy-provider
-        run: |
-          npm install --legacy-peer-deps
 
-      - name: .NET (Setup)
-        uses: actions/setup-dotnet@v5.0.1
-        with:
-            dotnet-version: '10.0.x'
-
-      - name: .NET (Restore Dependencies)
-        run: dotnet restore
         
       - name: .NET (Run)
         run: export ASPNETCORE_URLS=http://0.0.0.0:5000 & dotnet run & sleep 20
