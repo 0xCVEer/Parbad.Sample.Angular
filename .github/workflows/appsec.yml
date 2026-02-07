@@ -98,8 +98,8 @@ jobs:
       - name: Generate SBOM (CycloneDX)
         run: |
           trivy fs ./ClientApp/ \
+            --format cyclonedx \
             --output sbom.json
-            # --format cyclonedx \
 
       - name: Trivy SCA Scan (JSON)
         run: |
