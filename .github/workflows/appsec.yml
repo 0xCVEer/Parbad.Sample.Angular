@@ -111,7 +111,7 @@ jobs:
             --output trivy-sca.html
         continue-on-error: true
         
-  FrontEnd-Initialize:
+  Application-Initialize:
     needs: SCA
     runs-on: ubuntu-latest
     steps:
@@ -130,12 +130,12 @@ jobs:
         run: |
           npm install
 
-  BackEnd-Initialize:
-    needs: FrontEnd-Initialize
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # BackEnd-Initialize:
+  #   needs: FrontEnd-Initialize
+  #   runs-on: ubuntu-latest
+  #   steps:
+      # - name: Checkout
+      #   uses: actions/checkout@v4
         
       - name: .NET (Setup)
         uses: actions/setup-dotnet@v5.0.1
@@ -177,7 +177,7 @@ jobs:
       #       -j -o nuclei-result.json || true
 
   DAST:
-    needs: BackEnd-Initialize
+    needs: Application-Initialize
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
