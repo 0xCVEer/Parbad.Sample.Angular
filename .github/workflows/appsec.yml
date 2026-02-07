@@ -176,7 +176,7 @@ jobs:
           target: 'http://127.0.0.1:5000'
           
   Upload-Artifcatcs:
-    needs: BackEnd-Initialize
+    needs: DAST
     runs-on: ubuntu-latest
     steps:
       - name: Upload AppSec Artifacts
