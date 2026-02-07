@@ -152,6 +152,11 @@ jobs:
         with:
           artifact_name: zap_scan.zip
           target: 'http://127.0.0.1:5000'
+          cmd_options: >
+            -J zap-report.json
+            -r zap-report.html
+            -x zap-report.xml
+            -z "-config api.disablekey=true"
 
       - name: Upload AppSec Artifacts
         uses: actions/upload-artifact@v4
@@ -159,7 +164,9 @@ jobs:
           name: appsec-reports
           path: |
             nuclei-result.json
-            zap_scan.zip
+            zap-report.xml
+            zap-report.html
+            zap-report.json
             semgrep-report.html
             semgrep.json
             trufflehog.json
