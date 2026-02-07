@@ -6,16 +6,14 @@ on:
   pull_request:
 
 jobs:
-  Checkout:
+
+        
+  SAST:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         
-  SAST:
-    needs: Checkout
-    runs-on: ubuntu-latest
-    steps:
       - name: Install Semgrep
         run: |
           python3 -m pip install --upgrade pip
@@ -49,6 +47,9 @@ jobs:
     needs: SAST
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
       - name: Install TruffleHog
         run: |
           TRUFFLEHOG_VERSION=3.88.2
@@ -79,6 +80,9 @@ jobs:
     needs: Secret-Scanning
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
       - name: Install Trivy
         run: |
           TRIVY_VERSION=0.56.1
@@ -111,6 +115,9 @@ jobs:
     needs: SCA
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -127,6 +134,9 @@ jobs:
     needs: FrontEnd-Initialize
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
       - name: .NET (Setup)
         uses: actions/setup-dotnet@v5.0.1
         with:
@@ -154,6 +164,9 @@ jobs:
     needs: BackEnd-Initialize
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
       - name: Install Nuclei
         run: |
             curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest \
@@ -179,6 +192,9 @@ jobs:
     needs: DAST
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
       - name: Upload AppSec Artifacts
         uses: actions/upload-artifact@v4
         with:
