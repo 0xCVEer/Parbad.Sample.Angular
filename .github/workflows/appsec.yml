@@ -148,7 +148,7 @@ jobs:
       - name: .NET (Run)
         run: | 
           export ASPNETCORE_URLS=http://0.0.0.0:5000
-          dotnet run &
+          dotnet run & sleep 30
 
       - name: Wait for Backend
         run: |
