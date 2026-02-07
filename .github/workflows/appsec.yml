@@ -146,7 +146,23 @@ jobs:
         run: dotnet restore
         
       - name: .NET (Run)
-        run: dotnet run & sleep 20
+        run: | 
+          export ASPNETCORE_URLS=http://0.0.0.0:5000
+          dotnet run &
+
+      - name: Wait for Backend
+        run: |
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:5000 >/dev/null; then
+              echo "Backend is UP"
+              exit 0
+            fi
+            echo "Waiting for backend..."
+            sleep 2
+          done
+          echo "Backend did not start in time"
+          exit 1
+
 
       - name: .NET (Health Check)
         run: curl -I http://localhost:5000
