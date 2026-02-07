@@ -158,7 +158,7 @@ jobs:
               exit 0
             fi
             echo "Waiting for backend..."
-            sleep 2
+            sleep 5
           done
           echo "Backend did not start in time"
           exit 1
