@@ -19,6 +19,8 @@
     <PackageReference Include="Parbad" Version="3.10.0" />
     <PackageReference Include="Parbad.AspNetCore" Version="1.5.0" />
     <PackageReference Include="Parbad.Storage.Cache" Version="1.5.0" />
+    <!-- /Shared/ Dependency -->
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
