@@ -6,13 +6,15 @@ on:
   pull_request:
 
 jobs:
-  appsec:
+  Checkout:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout source code
+      - name: Checkout
         uses: actions/checkout@v4
-
+        
+  SAST:
+    runs-on: ubuntu-latest
+    steps:
       - name: Install Semgrep
         run: |
           python3 -m pip install --upgrade pip
@@ -42,6 +44,9 @@ jobs:
             --branch "${{ github.ref_name }}" \
             --only INFO,WARNING,ERROR
 
+  Secret-Scanning:
+    runs-on: ubuntu-latest
+    steps:
       - name: Install TruffleHog
         run: |
           TRUFFLEHOG_VERSION=3.88.2
@@ -68,7 +73,9 @@ jobs:
           echo "</table></body></html>" >> trufflehog.html
         continue-on-error: true
 
-
+  SCA:
+    runs-on: ubuntu-latest
+    steps:
       - name: Install Trivy
         run: |
           TRIVY_VERSION=0.56.1
@@ -96,7 +103,10 @@ jobs:
             --template "@contrib/html.tpl" \
             --output trivy-sca.html
         continue-on-error: true
-
+        
+  FrontEnd-Initialize:
+    runs-on: ubuntu-latest
+    steps:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -108,7 +118,10 @@ jobs:
           # (NodeJS version has been downgraded, no need to have this) NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm install --legacy-peer-deps
-
+          
+  BackEnd-Initialize:
+    runs-on: ubuntu-latest
+    steps:
       - name: .NET (Setup)
         uses: actions/setup-dotnet@v5.0.1
         with:
@@ -132,6 +145,9 @@ jobs:
       #       -severity info,low,medium,high,critical \
       #       -j -o nuclei-result.json || true
 
+  DAST:
+    runs-on: ubuntu-latest
+    steps:
       - name: Install Nuclei
         run: |
             curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest \
@@ -152,7 +168,9 @@ jobs:
         with:
           artifact_name: zap_scan.zip
           target: 'http://127.0.0.1:5000'
-
+  Upload-Artifcatcs:
+    runs-on: ubuntu-latest
+    steps:
       - name: Upload AppSec Artifacts
         uses: actions/upload-artifact@v4
         with:
