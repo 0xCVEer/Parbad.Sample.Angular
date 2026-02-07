@@ -78,7 +78,7 @@ jobs:
 
       - name: Generate SBOM (CycloneDX)
         run: |
-          trivy fs . \
+          trivy fs ./ClientApp/ \
             --format cyclonedx \
             --output sbom.json
 
