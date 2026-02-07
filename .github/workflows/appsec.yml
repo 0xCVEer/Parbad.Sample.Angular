@@ -95,25 +95,39 @@ jobs:
           sudo mv trivy /usr/local/bin/trivy
           trivy --version
 
-      - name: Generate SBOM (CycloneDX)
+      - name: Generate SBOM
         run: |
           trivy fs ./ClientApp/ \
             --format cyclonedx \
-            --output sbom.json
+            --output sbom-frontEnd.json
+          
+          trivy fs . \
+            --format cyclonedx \
+            --output sbom-backEnd.json
 
       - name: Trivy SCA Scan (JSON)
         run: |
-          trivy sbom sbom.json \
+          trivy sbom sbom-frontEnd.json \
             --format json \
-            --output trivy-sca.json
+            --output trivy-sca-frontEnd.json
+            
+          trivy sbom sbom-backEnd.json \
+            --format json \
+            --output trivy-sca-backEnd.json
+            
         continue-on-error: true
         
-      - name: Trivy SCA Scan (HTML)
+      - name: Trivy SCA Scan (Export HTML)
         run: |
-          trivy sbom sbom.json \
+          trivy sbom sbom-frontEnd.json \
             --format template \
             --template "@contrib/html.tpl" \
-            --output trivy-sca.html
+            --output trivy-sca-frontEnd.html
+            
+          trivy sbom sbom-backEnd.json \
+            --format template \
+            --template "@contrib/html.tpl" \
+            --output trivy-sca-backEnd.html
         continue-on-error: true
         
       - name: .NET (Run)
@@ -170,6 +184,9 @@ jobs:
             semgrep.json
             trufflehog.json
             trufflehog.html
-            sbom.json
-            trivy-sca.json
-            trivy-sca.html
+            sbom-frontEnd.json
+            sbom-backEnd.json
+            trivy-sca-backEnd.json
+            trivy-sca-backEnd.html
+            trivy-sca-frontEnd.json
+            trivy-sca-frontEnd.html
